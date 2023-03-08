@@ -27,7 +27,7 @@ public class Spawner : MonoBehaviour
     }
     public void addMoreBall()
     {
-        Vector3 spawnPosition = vertexTransform3.position + (Vector3)(Random.insideUnitCircle * 1);
+        Vector3 spawnPosition = vertexTransform3.position + (Vector3)(Random.insideUnitCircle * 0.1f);
         Instantiate(
             sphere,
             spawnPosition,

@@ -12,12 +12,13 @@ public class Fractal : MonoBehaviour
 
     [SerializeField]
     private float size;
-    Vector3 position;
+
+    List<GameObject> cube = new List<GameObject>();
 
     void Start()
     {
         //  This statement create a game object given a prefab, position and rotation.
-        Instantiate(
+        GameObject newObject = Instantiate(
             //  This parameter sets a prefab for an instance to be created.
             cubePrefab,
 
@@ -27,37 +28,68 @@ public class Fractal : MonoBehaviour
             //  This parameter sets an instance rotation to (0, 0, 0).
             Quaternion.identity
         );
+        cube.Add(newObject);
+    }
+    void addVeryFirst()
+    {
+        GameObject copy = Instantiate(cubePrefab, Vector3.zero, Quaternion.identity);
+        copy.transform.localScale = new Vector3(size, size, size);
+        cube.Add(copy);
+    }
+    public void addFirst()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject enemy in enemies)
+            GameObject.Destroy(enemy);
+
+        cube.Clear();
+        addVeryFirst();
+
+        for (int i = 1; i < iteration; i++)
+        {
+            List<GameObject> newCube = Split(cube);
+            foreach (var obj in cube)
+            {
+                Destroy(obj);
+            }
+            cube = newCube;
+        }
     }
 
-    public void size_generate()
+
+    List<GameObject> Split(List<GameObject> cube)
     {
-        GameObject[] Players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject Player in Players)
-          GameObject.Destroy(Player);
+        List<GameObject> subCube = new List<GameObject>();
 
-        for (int x = 0; x < size; x++)
+        foreach (var obj in cube)
         {
-            for(int y = 0; y < size; y++)
+            for (int x = -1; x < 2; x++)
             {
-                for(int z = 0; z < size; z++)
+                for (int y = -1; y < 2; y++)
                 {
-                    float xx = x * 3f;
-                    float yy = y * 3f;
-                    float zz = z * 3f;
+                    for (int z = -1; z < 2; z++)
+                    {
+                        float xx = x * (size);
+                        float yy = y * (size);
+                        float zz = z * (size);
+                        int sum = Mathf.Abs(x)+ Mathf.Abs(y)+ Mathf.Abs(z);
+                        if (sum>1)
+                        {
+                            Vector3 CubePos = new Vector3(xx, yy, zz) + obj.transform.position;
 
-                    Vector3 CubePos = new Vector3(xx, yy, zz);
-                    Instantiate(
-                        //  This parameter sets a prefab for an instance to be created.
-                        cubePrefab,
-
-                        //  This parameter sets an instance position to (0, 0, 0).
-                        CubePos,
-
-                        //  This parameter sets an instance rotation to (0, 0, 0).
-                        Quaternion.identity
-                    );
+                            GameObject copy = Instantiate(obj, CubePos, Quaternion.identity);
+                            copy.transform.localScale = new Vector3(size, size, size);
+                            subCube.Add(copy);
+                        }
+                    }
                 }
             }
         }
+        return subCube;
+
     }
+
 }
+
+
+
