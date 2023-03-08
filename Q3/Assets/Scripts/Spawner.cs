@@ -25,4 +25,13 @@ public class Spawner : MonoBehaviour
             Quaternion.identity
         );
     }
+    public void addMoreBall()
+    {
+        Vector3 spawnPosition = vertexTransform3.position + (Vector3)(Random.insideUnitCircle * 1);
+        Instantiate(
+            sphere,
+            spawnPosition,
+            Quaternion.identity
+        );
+    }
 }
